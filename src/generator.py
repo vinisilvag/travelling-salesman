@@ -2,7 +2,7 @@ import numpy as np
 from random import randint
 
 def main():
-    for idx in range(100):
+    for idx in range(10):
         exp = randint(4, 10)
         size = pow(2, exp)
 
@@ -11,10 +11,9 @@ def main():
         di = np.diag_indices(size)
         entrie[di] = -1
 
-        # write entrie in experiments/instances
-        print(entrie)
-
-        return entrie
+        with open(f'../experiments/instances/entrie{idx}.txt', 'w') as file:
+            for line in entrie:
+                np.savetxt(file, line, header=f'{size} {size}', fmt='%s')
 
 if __name__ == "__main__":
     main()

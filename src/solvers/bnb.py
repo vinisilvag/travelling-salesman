@@ -1,12 +1,14 @@
 import numpy as np
+import networkx as nx
 from queue import PriorityQueue
+
 import sys
 
 def bnb_tsp(graph, n):
     # root = (...)
     queue = PriorityQueue()
-    best = sys.maxsize
-    solution = []
+    best = sys.maxsize # infinity
+    solution = [] # vertices order
 
     # queue.put(root)
 
@@ -18,13 +20,6 @@ def bnb_tsp(graph, n):
                 best = node.cost
                 solution = node.solution
         elif node.bound < best:
-            if node.level < n:
-                for idx in enumerate(n):
+            print(node)
 
-def main():
-    # gen entrie
-    # create graph
-    # call bnb-tsp
-
-if __name__ == "__main__":
-    main()
+    return solution, best

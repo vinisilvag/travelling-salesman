@@ -1,1 +1,0 @@
-(Branch-and-Bound, entrie0.txt, Distância Euclidiana)(Branch-and-Bound), entrie0.txt, Distância Manhattan

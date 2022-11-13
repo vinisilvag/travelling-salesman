@@ -1,0 +1,3 @@
+method,entrie,metric,solution,path_cost
+branch-and-bound,entrie0.txt,euclidean,solution,path_cost
+branch-and-bound,entrie0.txt,manhattan,solution,path_cost

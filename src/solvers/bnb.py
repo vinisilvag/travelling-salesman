@@ -15,11 +15,4 @@ def bnb_tsp(graph, n):
     while not queue.empty():
         node = queue.get()
 
-        if node.level > n:
-            if best > node.cost:
-                best = node.cost
-                solution = node.solution
-        elif node.bound < best:
-            print(node)
-
     return solution, best

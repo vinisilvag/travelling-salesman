@@ -1,3 +1,5 @@
+# example of the book (to verify if the algorithms implemented are correct)
+
 import numpy as np
 import networkx as nx
 
@@ -14,10 +16,10 @@ graph = nx.from_numpy_matrix(entrie, create_using=nx.Graph())
 
 tat_sol, tat_cost = tat_tsp(graph)
 print("TAT:")
-print(tat_sol)
-print(tat_cost)
+print("Path",tat_sol)
+print("Cost:", tat_cost)
 
 ch_sol, ch_cost = christofides_tsp(graph)
 print("CHRISTOFIDES:")
-print(ch_sol)
-print(ch_cost)
+print("Path:", ch_sol)
+print("Cost:", ch_cost)

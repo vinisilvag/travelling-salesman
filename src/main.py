@@ -1,47 +1,66 @@
+import sys
+import os
+
 import numpy as np
 import networkx as nx
 
+import csv
+
+from timeit import default_timer as timer
+from datetime import timedelta
+
 from solvers.bnb import bnb_tsp
-from solvers.tatt import tatt_tsp
+from solvers.tat import tat_tsp
+from solvers.christofides import christofides_tsp
 
 def main():
-    no_instances = 1 # number of instances
+    solver = sys.argv[1] # solver function: first argument
+    entrie = sys.argv[2] # entrie: second argument
+    measure_type = sys.argv[3] # measure type: third argument
+
     instances_path = '../experiments/instances' # instances path
     output_path = '../experiments/output.csv' # output path
 
-    output = open(output_path, 'w')
+    header = ["solver", "entrie", "metric", "path", "cost", "time", "space"] # csv header
 
-    output.write('method,entrie,metric,solution,path_cost\n')
+    output_exists = os.path.isfile(output_path) # output file already created
+    output = open(output_path, 'a+')
+    writer = csv.writer(output)
 
-    for k in range(no_instances):
-        # load weights matrix
-        weights = np.loadtxt(f'{instances_path}/entrie{k}.txt',
+    if not output_exists:
+        writer.writerow(header) # if not created, create and write header
+
+    # load weights matrix
+    weights = np.loadtxt(f'{instances_path}/{entrie}-{measure_type}.txt',
                              dtype=np.int16)
 
-        # create and populate graph
-        graph = nx.Graph()
+    # create and populate graph
+    graph = nx.from_numpy_matrix(weights, create_using=nx.Graph())
 
-        for i, line in enumerate(weights):
-            for j, weight in enumerate(line):
-                if weight == -1: continue
+    if solver == "bnb":
+        print("bnb")
 
-                graph.add_edge(i, j, weight=weight)
+    if solver == "tat":
+        start = timer()
 
-        no_nodes = len(graph) # number of nodes
+        path, best = tat_tsp(graph)
 
-        # call bnb solver for tsp
-        bnb_sol, bnb_best = bnb_tsp(graph, no_nodes)
-        print('bnb:', bnb_sol)
+        end = timer()
+        time = (end - start) * 1000 # time in milliseconds
 
-        output.write(f'branch-and-bound,entrie{k}.txt,euclidean,solution,path_cost\n')
-        output.write(f'branch-and-bound,entrie{k}.txt,manhattan,solution,path_cost\n')
+        writer.writerow(["twice-around-the-tree", entrie, measure_type, path, best, time, "space"])
 
-        tatt_sol, tatt_cost = tatt_tsp(graph, 0)
-        print('tatt:', tatt_sol)
-        # TODO: write reuslt in ../experiments/output.txt file
+    if solver == "christofides":
+        start = timer()
 
-        # TODO: call christofides solver
-        # TODO: write result in ../experiments/output.txt file
+        path, best = christofides_tsp(graph)
+
+        end = timer()
+        time = end - start
+
+        writer.writerow(["christofides", entrie, measure_type, path, best, time, "space"])
+
+    output.close()
 
 if __name__ == '__main__':
     main()

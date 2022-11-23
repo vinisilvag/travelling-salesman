@@ -40,7 +40,7 @@ def main():
     if solver == "bnb":
         print("bnb")
 
-    if solver == "tat":
+    elif solver == "tat":
         start = timer()
 
         path, best = tat_tsp(graph)
@@ -50,13 +50,13 @@ def main():
 
         writer.writerow(["twice-around-the-tree", entrie, measure_type, path, best, time, "space"])
 
-    if solver == "christofides":
+    elif solver == "christofides":
         start = timer()
 
         path, best = christofides_tsp(graph)
 
         end = timer()
-        time = end - start
+        time = (end - start) * 1000 # time in milliseconds
 
         writer.writerow(["christofides", entrie, measure_type, path, best, time, "space"])
 

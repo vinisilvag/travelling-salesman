@@ -3,12 +3,11 @@ import networkx as nx
 
 def christofides_tsp(graph):
     best = 0
-    path = []
 
     mst = nx.minimum_spanning_tree(graph)
 
     odd_nodes = []
-    degrees = nx.degree(graph)
+    degrees = nx.degree(mst)
 
     for item in degrees:
         node, degree = item
@@ -21,14 +20,15 @@ def christofides_tsp(graph):
 
     multigraph = nx.MultiGraph()
 
-    for i, j, weight in graph.edges(data=True):
+    for i, j, weight in mst.edges(data=True):
         multigraph.add_edge(i, j, weight=weight)
 
     for edge in edges:
         i, j = edge
         multigraph.add_edge(i, j, weight=odd_degree_subgraph[i][j])
 
-    # TODO: compute eulerian path (dfs?)
+    path = list(nx.dfs_preorder_nodes(multigraph, source=0))
+    path.append(path[0])
 
     for i in range(len(path) - 1):
         best += graph[path[i]][path[i + 1]]['weight']

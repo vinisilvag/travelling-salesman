@@ -43,22 +43,34 @@ def main():
     elif solver == "tat":
         start = timer()
 
-        path, best = tat_tsp(graph)
+        path, best = tat_tsp(graph) # call the Twice-Around-the-Tree solver for the metric TSP
 
         end = timer()
         time = (end - start) * 1000 # time in milliseconds
 
-        writer.writerow(["twice-around-the-tree", entrie, measure_type, path, best, time, "space"])
+        writer.writerow(["twice-around-the-tree",
+                         entrie,
+                         measure_type,
+                         path,
+                         best,
+                         time,
+                         "space"])
 
     elif solver == "christofides":
         start = timer()
 
-        path, best = christofides_tsp(graph)
+        path, best = christofides_tsp(graph) # call the Christofides algorithm to solve the metric TSP
 
         end = timer()
         time = (end - start) * 1000 # time in milliseconds
 
-        writer.writerow(["christofides", entrie, measure_type, path, best, time, "space"])
+        writer.writerow(["christofides",
+                         entrie,
+                         measure_type,
+                         path,
+                         best,
+                         time,
+                         "space"])
 
     output.close()
 

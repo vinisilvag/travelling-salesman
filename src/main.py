@@ -38,7 +38,12 @@ def main():
     graph = nx.from_numpy_matrix(weights, create_using=nx.Graph())
 
     if solver == "bnb":
-        print("bnb")
+        start = timer()
+
+        bnb_tsp(weights, graph)
+
+        end = timer()
+        time = (end - start) * 1000 # time in milliseconds
 
     elif solver == "tat":
         start = timer()

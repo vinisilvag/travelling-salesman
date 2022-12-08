@@ -6,6 +6,7 @@ from math import ceil
 
 import sys
 
+# calculate bound for a partial solution
 def bound(weights, solution, no_nodes):
     selected = {} # dictionary with the nodes in the graph
 
@@ -15,19 +16,24 @@ def bound(weights, solution, no_nodes):
     copy = weights.copy()
     copy.astype(int)
 
-    for i in range(len(solution) - 1): # insert the fixed edges by the partial solution
+    # insert the fixed edges from the partial solution
+    for i in range(len(solution) - 1):
         start = solution[i]
         end = solution[i + 1]
 
+        # insert fixed edges in the dictionary
         selected[start].update({ end: copy[start][end] })
         selected[end].update({ start: copy[end][start] })
 
+        # makes the inserted edge maxsize so that the next step is unable to select it
         copy[start][end] = sys.maxsize
 
     # insert edges in each node with less than 2 fixed edges by the partial solution
     for key in selected:
         if len(selected[key].keys()) == 2: continue
 
+        # find the minimum edges incident to the current key and
+        # select it until key has 2 edges selected
         while len(selected[key].keys()) < 2:
             minimal = sys.maxsize
             minial_idx = -1
@@ -39,13 +45,15 @@ def bound(weights, solution, no_nodes):
                     minimal = w
                     minimal_idx = i
 
+            # insert edge in the dictionary
             selected[key].update({ minimal_idx: minimal })
 
+            # blocks the possibility of this edge being selected again
             copy[key][minimal_idx] = sys.maxsize
 
     total = 0
 
-    # sum edges
+    # sum selected edges
     for start in selected:
         for end in selected[start]:
             total += selected[start][end]
@@ -53,6 +61,7 @@ def bound(weights, solution, no_nodes):
     # calculate the metric
     return ceil(total / 2)
 
+# solve the TSP using the branch and bound strategy
 def bnb_tsp(weights, graph):
     no_nodes = graph.number_of_nodes() # number of nodes
 
@@ -61,12 +70,14 @@ def bnb_tsp(weights, graph):
     best = sys.maxsize # infinity
     solution = [] # vertices order
 
-    queue.put(root)
+    queue.put(root) # initialize the queue
 
     while not queue.empty():
-        partial_bound, level, cost, partial_solution = queue.get()
+        partial_bound, level, cost, partial_solution = queue.get() # pop the top
 
+        # if the partial solution is a hamiltonian circuit
         if level + 1 > no_nodes:
+            # if the cost of the partial solution is "better" than the current solution
             if best > cost:
                 best = cost
                 solution = partial_solution

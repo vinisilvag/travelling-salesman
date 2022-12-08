@@ -39,10 +39,18 @@ def main():
     if solver == "bnb":
         start = timer()
 
-        bnb_tsp(weights, graph)
+        path, best = bnb_tsp(weights, graph) # call the Branch-and-Bound solver for the metric TSP
 
         end = timer()
         time = (end - start) * 1000 # time in milliseconds
+
+        writer.writerow(["branch-and-bound",
+                         entrie,
+                         measure_type,
+                         path,
+                         best,
+                         time,
+                         "space"])
 
     elif solver == "tat":
         start = timer()

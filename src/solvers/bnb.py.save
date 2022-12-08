@@ -7,15 +7,17 @@ from math import ceil
 import sys
 
 def bound(weights, solution, no_nodes):
-    selected = {} # dictionary with the nodes in the graph
+    print(solution)
+    total = 0
+    selected = {}
 
     for i in range(no_nodes):
-        selected[i] = {} # create dictionary with all nodes in the graph
+        selected[i] = {}
 
     copy = weights.copy()
     copy.astype(int)
 
-    for i in range(len(solution) - 1): # insert the fixed edges by the partial solution
+    for i in range(len(solution) - 1):
         start = solution[i]
         end = solution[i + 1]
 
@@ -24,11 +26,10 @@ def bound(weights, solution, no_nodes):
 
         copy[start][end] = sys.maxsize
 
-    # insert edges in each node with less than 2 fixed edges by the partial solution
     for key in selected:
         if len(selected[key].keys()) == 2: continue
 
-        while len(selected[key].keys()) < 2:
+        while len(selected[key].keys()) != 2:
             minimal = sys.maxsize
             minial_idx = -1
 
@@ -45,16 +46,14 @@ def bound(weights, solution, no_nodes):
 
     total = 0
 
-    # sum edges
     for start in selected:
         for end in selected[start]:
             total += selected[start][end]
 
-    # calculate the metric
     return ceil(total / 2)
 
 def bnb_tsp(weights, graph):
-    no_nodes = graph.number_of_nodes() # number of nodes
+    no_nodes = graph.number_of_nodes()
 
     root = (bound(weights, [0], no_nodes), 0, 0, [0]) # bound, level, cost, solution
     queue = PriorityQueue()
@@ -66,33 +65,29 @@ def bnb_tsp(weights, graph):
     while not queue.empty():
         partial_bound, level, cost, partial_solution = queue.get()
 
-        if level + 1 > no_nodes:
+        if level > no_nodes:
             if best > cost:
                 best = cost
                 solution = partial_solution
 
         elif partial_bound < best:
-            if level + 1 < no_nodes:
+            connect_to_source = weights[partial_solution[-1]][0]
+            solution_connect_source = partial_solution.copy().append(0)
+            best_bound = bound(weights, solution_connect_source, no_nodes)
+
+            if level < no_nodes:
                 for k in range(1, no_nodes):
-                    if k not in partial_solution:
-                        distance = weights[partial_solution[-1]][k]
-
-                        incremented_solution = partial_solution.copy()
-                        incremented_solution.append(k)
-
-                        bound_value = bound(weights, incremented_solution, no_nodes)
-
-                        if distance != 0 and bound_value < best:
-                            queue.put((bound_value, level + 1, cost + distance, incremented_solution))
+                    distance = weights[partial_solution[-1]][k]
+                    incremented_solution = partial_solution.copy().append(k)
+                    bound_value = bound(weights, incremented_solution, no_nodes)
+connect_to_source = weights[partial_solution[-1]][0]
+            solution_connect_source = partial_solution.copy().append(0)
+            best_bound = bound(weights, solution_connect_source, no_nodes)
+                    if k not in partial_solution and distance != 0 and bound_value < best:
+                        queue.put(bound_value, level + 1, cost + distance, incremented_solution)
             else:
-                connect_to_source = weights[partial_solution[-1]][0]
 
-                if connect_to_source != 0:
-                    solution_connect_source = partial_solution.copy()
-                    solution_connect_source.append(0)
-                    best_bound = bound(weights, solution_connect_source, no_nodes)
-
-                    if best_bound < best and len(partial_solution) == no_nodes:
-                        queue.put((best_bound, level + 1, cost + connect_to_source, solution_connect_source))
+                if connect_to_source != 0 and best_bound < best and len(partial_solution) == no_nodes:
+                    queue.put(best_bound, level + 1, cost + connect_to_source, solution_connect_source)
 
     return solution, best

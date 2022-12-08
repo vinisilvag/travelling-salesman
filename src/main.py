@@ -31,8 +31,7 @@ def main():
         writer.writerow(header) # if not created, create and write header
 
     # load weights matrix
-    weights = np.loadtxt(f'{instances_path}/{entrie}-{measure_type}.txt',
-                             dtype=np.int16)
+    weights = np.loadtxt(f'{instances_path}/{entrie}-{measure_type}.txt')
 
     # create and populate graph
     graph = nx.from_numpy_matrix(weights, create_using=nx.Graph())

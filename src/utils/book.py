@@ -19,27 +19,22 @@ entrie = np.array([[ 0, 4,  8,  9, 12],
                    [ 9, 8, 10,  0,  7],
                    [12, 9, 11,  7,  0]])
 
-e_bnb = np.array([[0, 3, 1, 5, 8],
-                [3, 0, 6, 7, 9],
-                [1, 6, 0, 4, 2],
-                [5, 7, 4, 0, 3],
-                [8, 9, 2, 3, 0]])
-
 bnb_graph = nx.from_numpy_matrix(entrie, create_using=nx.Graph())
 
-sol, cost = bnb_tsp(e_bnb, bnb_graph)
+sol, cost = bnb_tsp(entrie, bnb_graph)
 
-print(sol)
-print(cost)
+print("BnB:")
+print("Path:", sol)
+print("Cost:", cost)
 
-#graph = nx.from_numpy_matrix(entrie, create_using=nx.Graph())
+graph = nx.from_numpy_matrix(entrie, create_using=nx.Graph())
 
-#tat_sol, tat_cost = tat_tsp(graph)
-#print("TAT:")
-#print("Path",tat_sol)
-#print("Cost:", tat_cost)
+tat_sol, tat_cost = tat_tsp(graph)
+print("TAT:")
+print("Path",tat_sol)
+print("Cost:", tat_cost)
 
-#ch_sol, ch_cost = christofides_tsp(graph)
-#print("CHRISTOFIDES:")
-#print("Path:", ch_sol)
-#print("Cost:", ch_cost)
+ch_sol, ch_cost = christofides_tsp(graph)
+print("CHRISTOFIDES:")
+print("Path:", ch_sol)
+print("Cost:", ch_cost)

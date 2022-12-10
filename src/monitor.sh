@@ -1,4 +1,5 @@
 #! /bin/bash
+# script to run all experiments automatically
 
 declare -a algorithms=("bnb" "tat" "christofides")
 declare -a distances=("euclidean" "manhattan")
@@ -8,7 +9,7 @@ for i in {4..10}; do
 
     for algo in "${algorithms[@]}"; do
         for distance in "${distances[@]}"; do
-            timeout 10s ping google.com
+            timeout 30m python3 main.py $algo 2^$i $distance
             EXIT_STATUS=$?
 
             if [ $EXIT_STATUS -eq 124 ]

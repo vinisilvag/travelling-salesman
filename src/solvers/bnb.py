@@ -36,7 +36,7 @@ def bound(weights, solution, no_nodes):
         # select it until key has 2 edges selected
         while len(selected[key].keys()) < 2:
             minimal = sys.maxsize
-            minial_idx = -1
+            minimal_idx = -1
 
             for i, w in enumerate(copy[key]):
                 if w == 0: continue
@@ -82,8 +82,11 @@ def bnb_tsp(weights, graph):
                 best = cost
                 solution = partial_solution
 
+        # partial solution is better than the current one
         elif partial_bound < best:
+            # all nodes have not yet been inserted into the solution
             if level + 1 < no_nodes:
+                # selects a node that is not in the partial solution
                 for k in range(1, no_nodes):
                     if k not in partial_solution:
                         distance = weights[partial_solution[-1]][k]
@@ -93,16 +96,20 @@ def bnb_tsp(weights, graph):
 
                         bound_value = bound(weights, incremented_solution, no_nodes)
 
+                        # if it is not an edge to itself and the bound is better than the current solution
                         if distance != 0 and bound_value < best:
                             queue.put((bound_value, level + 1, cost + distance, incremented_solution))
+            # all nodes have already been inserted
             else:
                 connect_to_source = weights[partial_solution[-1]][0]
 
                 if connect_to_source != 0:
+                    # inserts the source node at the end of the path
                     solution_connect_source = partial_solution.copy()
                     solution_connect_source.append(0)
                     best_bound = bound(weights, solution_connect_source, no_nodes)
 
+                    # if the partial solution is better than the current one insert it in the queue
                     if best_bound < best and len(partial_solution) == no_nodes:
                         queue.put((best_bound, level + 1, cost + connect_to_source, solution_connect_source))
 

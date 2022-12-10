@@ -9,6 +9,8 @@ import csv
 from timeit import default_timer as timer
 from datetime import timedelta
 
+import tracemalloc
+
 from solvers.bnb import bnb_tsp
 from solvers.tat import tat_tsp
 from solvers.christofides import christofides_tsp
@@ -38,10 +40,15 @@ def main():
 
     if solver == "bnb":
         start = timer()
+        tracemalloc.start()
 
         path, best = bnb_tsp(weights, graph) # call the Branch-and-Bound solver for the metric TSP
 
         end = timer()
+
+        _, peak = tracemalloc.get_traced_memory() # space peak in bytes
+        tracemalloc.stop()
+
         time = (end - start) * 1000 # time in milliseconds
 
         writer.writerow(["branch-and-bound",
@@ -50,14 +57,19 @@ def main():
                          path,
                          best,
                          time,
-                         "space"])
+                         peak])
 
     elif solver == "tat":
         start = timer()
+        tracemalloc.start()
 
         path, best = tat_tsp(graph) # call the Twice-Around-the-Tree solver for the metric TSP
 
         end = timer()
+
+        _, peak = tracemalloc.get_traced_memory() # space peak in bytes
+        tracemalloc.stop()
+
         time = (end - start) * 1000 # time in milliseconds
 
         writer.writerow(["twice-around-the-tree",
@@ -66,14 +78,19 @@ def main():
                          path,
                          best,
                          time,
-                         "space"])
+                         peak])
 
     elif solver == "christofides":
         start = timer()
+        tracemalloc.start()
 
         path, best = christofides_tsp(graph) # call the Christofides algorithm to solve the metric TSP
 
         end = timer()
+
+        _, peak = tracemalloc.get_traced_memory() # space peak in bytes
+        tracemalloc.stop()
+
         time = (end - start) * 1000 # time in milliseconds
 
         writer.writerow(["christofides",
@@ -82,7 +99,7 @@ def main():
                          path,
                          best,
                          time,
-                         "space"])
+                         peak])
 
     output.close()
 
